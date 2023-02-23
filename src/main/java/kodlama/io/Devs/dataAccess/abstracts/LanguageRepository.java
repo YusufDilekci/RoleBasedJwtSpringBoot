@@ -1,8 +1,10 @@
 package kodlama.io.Devs.dataAccess.abstracts;
 
-import kodlama.io.Devs.core.dataAccess.EntityRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+
 import kodlama.io.Devs.entities.Language;
 
-public interface LanguageRepository extends EntityRepository<Language> {
+public interface LanguageRepository extends JpaRepository<Language, Integer> {
 
 }

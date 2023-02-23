@@ -1,11 +1,23 @@
 package kodlama.io.Devs.business.concretes;
 
+
 import java.util.List;
 
+
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import kodlama.io.Devs.business.abstracts.LanguageService;
+import kodlama.io.Devs.core.utilities.results.DataResult;
+import kodlama.io.Devs.core.utilities.results.ErrorDataResult;
+import kodlama.io.Devs.core.utilities.results.ErrorResult;
+import kodlama.io.Devs.core.utilities.results.Result;
+import kodlama.io.Devs.core.utilities.results.SuccessDataResult;
+import kodlama.io.Devs.core.utilities.results.SuccessResult;
 import kodlama.io.Devs.dataAccess.abstracts.LanguageRepository;
 import kodlama.io.Devs.entities.Language;
 
@@ -18,43 +30,63 @@ public class LanguageManager implements LanguageService {
 		this.languageRepository = languageRepository;
 	}
 	@Override
-	public List<Language> getAll() {
+	public DataResult<List<Language>> getAll() {
 
-		return languageRepository.getAll();
+		return new SuccessDataResult<List<Language>>("Data listelendi", languageRepository.findAll());
 	}
 
 	@Override
-	public Language getById(int id) {
-
-		return languageRepository.getById(id);
+	public DataResult<Language> getById(int id) {
+		Language lang = languageRepository.findById(id).get();
+		if(lang == null) {
+			return new ErrorDataResult<Language>("Asfsaf");
+		}
+		return new SuccessDataResult<Language>("Language getirldi", lang);
 	}
 
 	@Override
-	public void Add(Language language) throws Exception{
-		for(Language lang:languageRepository.getAll()) {
+	public Result Add(Language language) {
+		for(Language lang:languageRepository.findAll()) {
 			if(language.getLanguageName() == lang.getLanguageName()) {
-				throw new Exception("İsimler tekrar edemez.");
+				return new ErrorResult("İsimler tekrar edemez.");
 			}
 		}
 		if(language.getLanguageName() == null) {
-			throw new Exception("Programlama dili boş geçilemez.");
+			return  new ErrorResult("Programlama dili boş geçilemez.");
 		}
 		
-		languageRepository.Add(language);
+		languageRepository.save(language);
+		return new SuccessResult();
+		
+	}
+
+
+	@Override
+	public Result Update(Language language) {
+		
+		Language lang = languageRepository.getReferenceById(language.getLanguageId());
+		if(lang != null) {
+			lang.setLanguageName(language.getLanguageName());
+			lang.setPopularity(language.getPopularity());
+		}
+		
+		languageRepository.save(lang);
+		return new SuccessResult();
+
 		
 	}
 
 	@Override
-	public void Update(Language language) {
+	public Result Delete(int langId) {
 		
-		languageRepository.Update(language);
+		languageRepository.deleteById(langId);
+		return new SuccessResult();
 	}
-
-	@Override
-	public void Delete(Language language) {
-		
-		languageRepository.Delete(language);
 	
+	public DataResult<List<Language>> getAllByPage(int pageNo, int pageSize, String sortBy){
+		
+		Pageable pageable = PageRequest.of(pageNo-1, pageSize, Sort.by(sortBy).ascending());
+		return new SuccessDataResult<List<Language>>(languageRepository.findAll(pageable).getContent());
 	}
 
 }

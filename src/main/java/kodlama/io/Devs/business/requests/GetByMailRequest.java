@@ -1,15 +1,15 @@
-package kodlama.io.Devs.entities;
+package kodlama.io.Devs.business.requests;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Techs {
-	private int techId;
-	private String techName;
+public class GetByMailRequest {
 	
-	
+	private String email;
 }

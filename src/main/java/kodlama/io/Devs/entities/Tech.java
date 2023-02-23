@@ -1,42 +1,32 @@
 package kodlama.io.Devs.entities;
 
-import java.util.Set;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-
+@Table(name = "TECHS")
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-@Table(name="LANGUAGES")
+@AllArgsConstructor
 @Entity
-
-public class Language {
-	
+public class Tech {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	@Column(name = "id")
-	private int  languageId;
+	@Column(name="techId")
+	private int techId;
 	
-	@Column(name = "languageName")
-	private String languageName;
+	@Column(name="techName")
+	private String techName;
 	
-	@Column(name = "popularity")
-	private int popularity;
-	
-	@Column(name = "whoCreator")
-	private String whoCreator;
-	
-	@OneToMany(mappedBy="language")
-	private Set<Tech> techs;
-	
+	@ManyToOne
+	@JoinColumn(name="languageId", nullable=false)
+	private Language language;
 }
